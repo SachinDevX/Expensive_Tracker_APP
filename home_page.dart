@@ -1,3 +1,4 @@
+import 'package:expensive_track/components/expense_summary.dart';
 import 'package:expensive_track/components/expense_tile.dart';
 import 'package:expensive_track/data/expense_data.dart';
 import 'package:expensive_track/models/expensive_item.dart';
@@ -38,8 +39,8 @@ class _HomepageState extends State<Homepage> {
           actions: [
             //save button
             MaterialButton(
-                onPressed: save,
-                child: Text('Save'),
+              onPressed: save,
+              child: Text('Save'),
             ),
             //cancel button
             MaterialButton(
@@ -52,9 +53,9 @@ class _HomepageState extends State<Homepage> {
   void save(){
     //create expense item
     ExpenseItem newExpense = ExpenseItem(
-    name: newExpenseNameController.text,
-    amount: newExpenseAmountController.text,
-    dateTime: DateTime.now(),
+      name: newExpenseNameController.text,
+      amount: newExpenseAmountController.text,
+      dateTime: DateTime.now(),
     );
     Provider.of<ExpenseData>(context,listen: false).addNewExpense(newExpense);
     Navigator.pop(context);
@@ -75,20 +76,27 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Consumer<ExpenseData>(
         builder: (context, value, child) =>Scaffold(
-          backgroundColor: Colors.grey[300],
-          floatingActionButton: FloatingActionButton(
-            onPressed: addNewExpense,
-            child: Icon(Icons.add),
-          ),
-          body: ListView.builder(
-              itemCount: value.getAllExpenseList().length,
-              itemBuilder :(context, index) => ExpenseTile(
-                  amount: value.getAllExpenseList()[index].amount,
-                  name: value.getAllExpenseList()[index].name,
-                  dateTime: value.getAllExpenseList()[index].dateTime,
-              ),
+      backgroundColor: Colors.grey[300],
+      floatingActionButton: FloatingActionButton(
+        onPressed: addNewExpense,
+        child: Icon(Icons.add),
+      ),
+      body:ListView(children: [
+        //weekly summary
+        ExpenseSummary(startOfweek: value.startOfWeekData()),
 
-          ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics() ,
+          itemCount: value.getAllExpenseList().length,
+          itemBuilder :(context, index) => ExpenseTile(
+            amount: value.getAllExpenseList()[index].amount,
+            name: value.getAllExpenseList()[index].name,
+            dateTime: value.getAllExpenseList()[index].dateTime,
+                ),
+               ),
+             ],
+           ),
         ),
     );
   }
