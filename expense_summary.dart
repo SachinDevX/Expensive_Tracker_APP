@@ -11,7 +11,61 @@ class ExpenseSummary extends StatelessWidget {
     super.key,
     required this.startOfweek,
   });
+  //calculate max amount in bar graph
+  double calculateMax(
+      ExpenseData value,
+      String sunday,
+      String monday,
+      String tuesday,
+      String wednesday,
+      String thursday,
+      String friday,
+      String saturday,
+        ){
+        double? max = 100;
 
+        List<double> values = [
+          value.calculateDailyExpensesummary()[sunday] ?? 0,
+          value.calculateDailyExpensesummary()[monday] ?? 0,
+          value.calculateDailyExpensesummary()[tuesday] ?? 0,
+          value.calculateDailyExpensesummary()[wednesday] ?? 0,
+          value.calculateDailyExpensesummary()[thursday] ?? 0,
+          value.calculateDailyExpensesummary()[friday] ?? 0,
+          value.calculateDailyExpensesummary()[saturday] ?? 0,
+
+        ];
+        values.sort();
+        max = values.last * 1.1;
+         return max == 0 ? 100:max;
+
+  }
+  //calculate week total
+  String calculateWeekTotal(
+        ExpenseData value,
+        String sunday,
+        String monday,
+        String tuesday,
+        String wednesday,
+        String thursday,
+        String friday,
+        String saturday,
+      ){
+    List<double> values = [
+      value.calculateDailyExpensesummary()[sunday] ?? 0,
+      value.calculateDailyExpensesummary()[monday] ?? 0,
+      value.calculateDailyExpensesummary()[tuesday] ?? 0,
+      value.calculateDailyExpensesummary()[wednesday] ?? 0,
+      value.calculateDailyExpensesummary()[thursday] ?? 0,
+      value.calculateDailyExpensesummary()[friday] ?? 0,
+      value.calculateDailyExpensesummary()[saturday] ?? 0,
+
+    ];
+    double total = 0;
+    for (int i = 0; i<values.length; i++){
+      total += values[i];
+    }
+    return total.toStringAsFixed(2);
+  }
   @override
   Widget build(BuildContext context) {
     //get yyyymmdd for each day of this week
@@ -27,19 +81,34 @@ class ExpenseSummary extends StatelessWidget {
       
 
       builder: (context, value, child) =>
-          SizedBox(
-            height: 200,
-            child: MyBarGraph(
-              maxY: 100,
-              monamount: value.calculateDailyExpensesummary()[monday]??0,
-              tuesamount: value.calculateDailyExpensesummary()[tuesday]??0,
-              wedamount: value.calculateDailyExpensesummary()[wednesday]??0,
-              thursamount: value.calculateDailyExpensesummary()[thursday]??0,
-              friamount: value.calculateDailyExpensesummary()[friday]??0,
-              satamount: value.calculateDailyExpensesummary()[saturday]??0,
-              sunamount: value.calculateDailyExpensesummary()[sunday]??0,
-            ),
+          Column(
+            children: [
+              //week total
+              Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: Row(
+                  children: [
+                    Text('Week Total', style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text('\$'+ calculateWeekTotal(value, sunday, monday, tuesday, wednesday, thursday, friday, saturday))
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 200,
+                child: MyBarGraph(
+                  maxY: calculateMax(value, sunday, monday, tuesday, wednesday, thursday, friday, saturday),
+                  monamount: value.calculateDailyExpensesummary()[monday]??0,
+                  tuesamount: value.calculateDailyExpensesummary()[tuesday]??0,
+                  wedamount: value.calculateDailyExpensesummary()[wednesday]??0,
+                  thursamount: value.calculateDailyExpensesummary()[thursday]??0,
+                  friamount: value.calculateDailyExpensesummary()[friday]??0,
+                  satamount: value.calculateDailyExpensesummary()[saturday]??0,
+                  sunamount: value.calculateDailyExpensesummary()[sunday]??0,
+                ),
 
+              ),
+            ],
           ),
     );
   }
