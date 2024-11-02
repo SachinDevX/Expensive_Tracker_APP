@@ -29,17 +29,17 @@ class BarData{
       //sun
       individual_bar(x: 0, y: sunamount),
       //mon
-      individual_bar(x: 0, y: monamount),
+      individual_bar(x: 1, y: monamount),
       //tues
-      individual_bar(x: 0, y: tuesamount),
+      individual_bar(x: 2, y: tuesamount),
       //wed
-      individual_bar(x: 0, y: wedamount),
+      individual_bar(x: 3, y: wedamount),
       //thur
-      individual_bar(x: 0, y: thursamount),
+      individual_bar(x: 4, y: thursamount),
       //fri
-      individual_bar(x: 0, y: friamount),
+      individual_bar(x: 5, y: friamount),
       //sat
-      individual_bar(x: 0, y: satamount),
+      individual_bar(x: 6, y: satamount),
 
 
 
