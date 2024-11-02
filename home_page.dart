@@ -18,6 +18,12 @@ class _HomepageState extends State<Homepage> {
   final newExpenseDollarController = TextEditingController();
   final newExpenseCentsController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    //prepare data on startup
+    Provider.of<ExpenseData>(context,listen: false).prepareData();
+  }
   //add new expense
   void addNewExpense(){
     showDialog(
@@ -50,7 +56,8 @@ class _HomepageState extends State<Homepage> {
                 Expanded(
                   child: TextField(
                     controller: newExpenseCentsController,
-                    decoration: const InputDecoration(
+                    keyboardType: TextInputType.number,
+                    decoration:  InputDecoration(
                       hintText: "Cents"
                     ),
                   ),
@@ -73,16 +80,25 @@ class _HomepageState extends State<Homepage> {
         )
     );
   }
+  void deleteexpense(ExpenseItem expense){
+    Provider.of<ExpenseData>(context,listen: false).deleteExpense(expense);
+  }
   void save(){
-    //put dollars and cents together
-    String amount = '${newExpenseDollarController.text}.${newExpenseCentsController.text}';
-    //create expense item
-    ExpenseItem newExpense = ExpenseItem(
-      name: newExpenseNameController.text,
-      amount: amount,
-      dateTime: DateTime.now(),
-    );
-    Provider.of<ExpenseData>(context,listen: false).addNewExpense(newExpense);
+  //only save the expense if all the fields are fill
+    if(newExpenseDollarController.text.isNotEmpty &&
+        newExpenseCentsController.text.isNotEmpty&&
+    newExpenseNameController.text.isNotEmpty)
+    {
+      //put dollars and cents together
+      String amount = '${newExpenseDollarController.text}.${newExpenseCentsController.text}';
+      //create expense item
+      ExpenseItem newExpense = ExpenseItem(
+        name: newExpenseNameController.text,
+        amount: amount,
+        dateTime: DateTime.now(),
+      );
+      Provider.of<ExpenseData>(context,listen: false).addNewExpense(newExpense);
+    }
     Navigator.pop(context);
     clear();
   }
@@ -94,7 +110,7 @@ class _HomepageState extends State<Homepage> {
   }
   void clear(){
     newExpenseNameController.clear();
-    newExpenseCentsController.clear();
+    newExpenseDollarController.clear();
     newExpenseCentsController.clear();
   }
 
@@ -106,7 +122,7 @@ class _HomepageState extends State<Homepage> {
       floatingActionButton: FloatingActionButton(
         onPressed: addNewExpense,
         backgroundColor: Colors.black,
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add,color: Colors.white,),
       ),
       body:ListView(children: [
         //weekly summary
@@ -120,6 +136,7 @@ class _HomepageState extends State<Homepage> {
             amount: value.getAllExpenseList()[index].amount,
             name: value.getAllExpenseList()[index].name,
             dateTime: value.getAllExpenseList()[index].dateTime,
+            deleTapped: (p0) => deleteexpense(value.getAllExpenseList()[index]),
                 ),
                ),
              ],
